@@ -7,7 +7,7 @@ import logging
 
 
 # LOGGING
-def get_logger(file: bool = True, console: bool = True) -> logging.getLogger():
+def get_logger() -> logging.getLogger():
     formatting = '%(asctime)s %(levelname)s %(message)s'
     logging.basicConfig(level="NOTSET", format=formatting, datefmt='%d/%m/%Y %H:%M:%S')
     logging.getLogger().addHandler(logging.StreamHandler())
@@ -17,13 +17,16 @@ def get_logger(file: bool = True, console: bool = True) -> logging.getLogger():
 
 log = get_logger()
 
-# SESSION
-SESSION_DEVICES = {}
-SESSION_DEVICES_IP = []
 
 TG_RECIPIENTS = [
+    # '284754687',
+    # '370180455', # Олег
+    # '558338567', # Серега
+    # '911755144', # Лука
+    # '5411996165', # Дато
+    # '1230776012', # Гио
+    '294773056'  # Саша
 ]
-
 
 # TECH
 TEMP_PCB_MAX = 85
@@ -34,6 +37,14 @@ AUTH = [
     {
         'username': 'admin',
         'password': 'admin'
+    },
+    {
+        'username': 'root',
+        'password': 'root'
+    },
+    {
+        'username': 'root',
+        'password': '2wsx'
     }
 ]
 

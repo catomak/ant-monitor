@@ -41,18 +41,18 @@ def look_device(devices: dict = config.SESSION_DEVICES) -> None:
                 index_lens[index] = val_len
                 indexes += str(index).rjust(val_len)
 
+    log.info(f'Got {len(devices)} devices:', indexes, miners, sep="\n")
+
 
 def monitor():
-    log.info('Start monitoring')
     devices = ip_searcher.find_ip()
-    log.info('Start sessions')
     session_devices = get_session_devices(devices)
-    log.info('Start looking')
     look_device(session_devices)
     MinerErrorDiag.check_session_devices(session_devices)
 
 
 def main():
+    log.info('Start monitoring')
     while True:
         monitor()
         time.sleep(60)
