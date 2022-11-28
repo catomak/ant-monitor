@@ -1,6 +1,4 @@
-from rich import pretty
 import logging
-from rich.logging import RichHandler
 
 
 # OLD
@@ -10,16 +8,11 @@ from rich.logging import RichHandler
 
 # LOGGING
 def get_logger(file: bool = True, console: bool = True) -> logging.getLogger():
-    pretty.install()
-    formatting = "%(message)s"
-    logging.basicConfig(
-        level="NOTSET",
-        format=formatting,
-        datefmt="[%X]",
-        handlers=[RichHandler(),
-                  logging.FileHandler('app.log', 'w', 'utf-8')]
-    )
-    return logging.getLogger("rich")
+    formatting = '%(asctime)s %(levelname)s %(message)s'
+    logging.basicConfig(level="NOTSET", format=formatting, datefmt='%d/%m/%Y %H:%M:%S')
+    logging.getLogger().addHandler(logging.StreamHandler())
+    logger = logging.getLogger('app.log')
+    return logger
 
 
 log = get_logger()

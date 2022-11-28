@@ -27,6 +27,3 @@ pids
 .vscode
 config.ini
 /src/tests
-
-# temp
-/src/modules/ip_searcher.py
