@@ -38,13 +38,12 @@ class Miner:
 
         return system_info
 
-    # TODO: переделать
     @classmethod
     def get_miner_api(cls, miner_type: str) -> dict:
-        for api_type, data in config.API.items():
-            for model in data.get('models'):
-                if model in miner_type:
-                    return data
+        for api in config.API:
+            for models in api.get('models'):
+                if models in miner_type:
+                    return api
 
     @classmethod
     def get_device_status(cls, ip: str, session: requests.Session, api: dict) -> json:
@@ -91,7 +90,7 @@ class Miner:
             'elapsed': None
         }
 
-        if api.get('api_version') == 'api_v1':
+        if api.get('version') == 'ant_1':
 
             if not (devs := device_status.get('devs')):
                 log.info(f'{ip}: Не обнаружено плат. Вероятно майнер был недавно перезапущен')
@@ -136,7 +135,7 @@ class Miner:
                 if chain_rate := freq.get(f'chain_rate{r}'):
                     parsed_data['chain_rate'].append(int(float(chain_rate)))
 
-        elif api.get('api_version') == 'api_v2':
+        elif api.get('version') == 'ant_1':
 
             summary = device_status.get('STATS')[0]
             parsed_data['ghs5s'] = max(int(summary.get('rate_5s')), 0)
@@ -154,7 +153,7 @@ class Miner:
                 parsed_data['chain_rate'].append(max(int(d.get('rate_real')), 0))
 
         else:
-            log.info(f'{ip}: API не поддерживается, проверьте наличие модели. в конфигурации программы')
+            log.info(f'{ip}: API не поддерживается, проверьте наличие модели {miner_type} в конфигурации программы')
 
         return parsed_data
 
@@ -252,14 +251,19 @@ class MinerErrorDiag:
 
     @classmethod
     def full_check_device(cls, device: dict) -> list:
-        checks = (cls.check_pcb_temp, cls.check_fan_speed, cls.check_hash_rate)
-        errors = [c(device) for c in checks if c(device)]
+        checks = [cls.check_pcb_temp, cls.check_fan_speed, cls.check_hash_rate]
+        errors = []
+        for c in checks:
+            if err := c(device):
+                errors.append(err)
+
         return errors
 
     @classmethod
-    def check_pcb_temp(cls, device: dict) -> str:
+    def check_pcb_temp(cls, device: dict) -> str | None:
         if not (pcb_temp := device.get('pcb_temp')):
             log.warning(f"{device.get('ip')}:{device.get('miner_type')} - не удалось определить температуру плат")
+            return
         temp_errs = ''
 
         if max(pcb_temp) >= config.TEMP_PCB_MAX:
@@ -271,17 +275,19 @@ class MinerErrorDiag:
         return temp_errs
 
     @classmethod
-    def check_fan_speed(cls, device: dict) -> str:
+    def check_fan_speed(cls, device: dict) -> str | None:
         if not (fan_speed := device.get('fan_speed')):
             log.warning(f"{device.get('ip')}:{device.get('miner_type')} - не удалось определить скорость вентиляторов")
+            return
 
         if min(fan_speed) <= config.FAN_SPEED_MIN:
             return cls.ERRS['min_temp'].format(device.get('ip'), device.get('miner_type'), device.get('fan_speed'))
 
     @classmethod
-    def check_hash_rate(cls, device: dict) -> str:
+    def check_hash_rate(cls, device: dict) -> str | None:
         if not device.get('ghs5s') or not device.get('ghsav'):
             log.warning(f"{device.get('ip')}:{device.get('miner_type')} - не удалось определить hash rate")
+            return
 
         if device.get('elapsed') > 30.0 and (1 - device.get('ghs5s') / device.get('ghsav')) >= 0.2:
             return cls.ERRS['min_temp'].format(device.get('ip'), device.get('miner_type'), device.get('ghs5s'), device.get('ghsav'))

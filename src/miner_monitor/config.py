@@ -9,7 +9,8 @@ import logging
 # LOGGING
 def get_logger() -> logging.getLogger():
     formatting = '%(asctime)s %(levelname)s %(message)s'
-    logging.basicConfig(level="NOTSET", format=formatting, datefmt='%d/%m/%Y %H:%M:%S')
+    # logging.basicConfig(level="NOTSET", format=formatting, datefmt='%d.%m.%Y %H:%M:%S')
+    logging.basicConfig(level=logging.INFO, format=formatting, datefmt='%d.%m.%Y %H:%M:%S')
     # logging.getLogger().addHandler(logging.StreamHandler())
     logger = logging.getLogger('app.log')
     return logger
@@ -19,13 +20,6 @@ log = get_logger()
 
 
 TG_RECIPIENTS = [
-    # '284754687',
-    # '370180455', # Олег
-    # '558338567', # Серега
-    # '911755144', # Лука
-    # '5411996165', # Дато
-    # '1230776012', # Гио
-    '294773056'  # Саша
 ]
 
 # TECH
@@ -65,14 +59,16 @@ API_URLS = {
     ]
 }
 
-API = {
-    'api_v1': {
+API = [
+    {
+        'version': 'ant_1',
         'models': ['L3', 'S17'],
         'status_url': API_URLS.get('miner_status')
     },
-    'api_v2': {
+    {
+        'version': 'ant_2',
         'models': ['S19'],
         'status_url': API_URLS.get('stats')
     }
-}
+]
 
