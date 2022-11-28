@@ -1,0 +1,7 @@
+DateTime~=4.4
+requests~=2.28.1
+colorama~=0.4.6
+urllib3~=1.26.9
+requests
+
+
