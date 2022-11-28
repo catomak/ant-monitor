@@ -8,7 +8,7 @@ import logging
 
 # LOGGING
 def get_logger() -> logging.getLogger():
-    formatting = '%(asctime)s %(levelname)s %(message)s'
+    formatting = '%(asctime)s %(levelname)s: %(message)s'
     # logging.basicConfig(level="NOTSET", format=formatting, datefmt='%d.%m.%Y %H:%M:%S')
     logging.basicConfig(level=logging.INFO, format=formatting, datefmt='%d.%m.%Y %H:%M:%S')
     # logging.getLogger().addHandler(logging.StreamHandler())
@@ -23,6 +23,7 @@ TG_RECIPIENTS = [
 ]
 
 # TECH
+CHECK_PAUSE = 60
 TEMP_PCB_MAX = 85
 TEMP_PCB_MIN = 1
 FAN_SPEED_MIN = 1000

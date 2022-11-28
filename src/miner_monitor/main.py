@@ -35,28 +35,30 @@ def look_device(devices: dict) -> None:
 
     for device in devices.values():
         for index, value in device.items():
-            val_len = len(str(value)) + 5
-            miners += str(value).rjust(val_len)
-            if not index_lens.get(index):
+            if not (val_len := index_lens.get(index)):
+                val_len = len(str(value)) + 5
                 index_lens[index] = val_len
-                indexes += str(index).rjust(val_len)
+                indexes += str(index).ljust(val_len)
+            miners += str(value).ljust(val_len)
+        miners += '\n'
     look_str = "Got {len} devices:\n{indexes}\n{miners}"
     log.info(look_str.format(len=len(devices), indexes=indexes, miners=miners))
 
 
 def monitor():
-    # devices = ip_searcher.find_ip()
-    devices = ['192.168.89.72']
+    log.info("Searching for devices on the network...")
+    devices = ip_searcher.find_ip()
     session_devices = get_session_devices(devices)
     look_device(session_devices)
-    MinerErrorDiag.check_session_devices(session_devices)
+    # MinerErrorDiag.check_session_devices(session_devices)
 
 
 def main():
-    log.info('Start monitoring')
+    log.info('START MONITORING')
     while True:
         monitor()
-        time.sleep(60)
+        time.sleep(config.CHECK_PAUSE)
+        log.info(f'SLEEPING {config.CHECK_PAUSE}')
 
 
 if __name__ == '__main__':

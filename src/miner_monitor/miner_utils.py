@@ -135,7 +135,7 @@ class Miner:
                 if chain_rate := freq.get(f'chain_rate{r}'):
                     parsed_data['chain_rate'].append(int(float(chain_rate)))
 
-        elif api.get('version') == 'ant_1':
+        elif api.get('version') == 'ant_2':
 
             summary = device_status.get('STATS')[0]
             parsed_data['ghs5s'] = max(int(summary.get('rate_5s')), 0)
