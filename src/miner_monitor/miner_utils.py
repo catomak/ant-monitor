@@ -194,7 +194,7 @@ class MinerConnector:
     def __init__(self, ip: str, auth_data: str = None) -> None:
         self.ip = ip
         self.auth_data = auth_data
-        self.session = self.start_session(ip, auth_data)
+        self.session = self.start_session(auth_data)
 
     def __enter__(self) -> requests.Session:
         return self.session
@@ -203,7 +203,7 @@ class MinerConnector:
         if not hasattr(self, 'session') and isinstance(self.session, requests.Session):
             self.session.close()
 
-    def start_session(self, ip, auth_data: dict = None) -> requests.Session | None:
+    def start_session(self, auth_data: dict = None) -> requests.Session | None:
         session = requests.Session()
         if auth_data:
             return self.get_access(session, auth_data)
@@ -218,7 +218,7 @@ class MinerConnector:
         try:
             response = session.get(f'http://{self.ip}')
             if response.status_code == 200:
-                config.SESSION_DEVICES_IP.append(self.ip)
+                # config.SESSION_DEVICES_IP.append(self.ip)
                 return session
         except Exception as e:
             log.error(f'{self.ip}: Не удалось подключитьcя к устройству. Ошибка: {e}')

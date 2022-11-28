@@ -23,7 +23,7 @@ def get_session_devices(ip_addresses: list) -> dict | None:
     return session_devices
 
 
-def look_device(devices: dict = config.SESSION_DEVICES) -> None:
+def look_device(devices: dict) -> None:
 
     if not devices:
         log.info('Устройств в локальной сети не найдено')

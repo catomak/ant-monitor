@@ -10,7 +10,7 @@ import logging
 def get_logger() -> logging.getLogger():
     formatting = '%(asctime)s %(levelname)s %(message)s'
     logging.basicConfig(level="NOTSET", format=formatting, datefmt='%d/%m/%Y %H:%M:%S')
-    logging.getLogger().addHandler(logging.StreamHandler())
+    # logging.getLogger().addHandler(logging.StreamHandler())
     logger = logging.getLogger('app.log')
     return logger
 
