@@ -1,9 +1,9 @@
-from miner_utils import Miner, MinerConnector, MinerErrorDiag
+from miner import Miner, MinerConnector, MinerErrorDiag
 from src.modules import ip_searcher
 from config import log
 import config
 import time
-
+ 
 
 def get_session_devices(ip_addresses: list) -> dict | None:
     if not ip_addresses:
@@ -13,7 +13,6 @@ def get_session_devices(ip_addresses: list) -> dict | None:
     session_devices = {}
 
     for ip in ip_addresses:
-        # TODO: передавать результат в переменную
         with MinerConnector(ip, None) as connection:
             miner = Miner(ip, connection)
             if miner.system_info:
@@ -55,10 +54,13 @@ def look_device(devices: dict) -> None:
 
 def monitor():
     log.info("Searching for devices on the network...")
-    # devices = ip_searcher.find_ip()
+    devices = ip_searcher.find_ip()
+    log.info(f'Finded {devices} devices:')
+    print('\n'.join(devices))
     # session_devices = get_session_devices(devices)
-    session_devices = {}
-    look_device(session_devices)
+    # session_devices = {}
+    # look_device(session_devices)
+    # # TODO: добавить поле ошибки в майнере и диагностировать при работе с конкретным устройством, потом отображать
     # MinerErrorDiag.check_session_devices(session_devices)
 
 
