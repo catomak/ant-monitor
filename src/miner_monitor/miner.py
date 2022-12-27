@@ -1,6 +1,7 @@
 from requests.auth import HTTPDigestAuth
 from config import log
-from src.modules import telegram_bot
+from modules import telegram_bot
+from dataclasses import dataclass
 import requests
 import json
 import time
@@ -14,11 +15,12 @@ class Miner:
             cls.instance = super(Miner, cls).__new__(cls)
         return cls.instance
 
-    # TODO: учесть зависимость от наличия инфо на каждой стадии
     def __init__(self, ip: str, session: requests.Session) -> None:
         self.ip = ip
         self.session = session
-        self.system_info = self.get_system_info(self.session, self.ip)                                                                                       
+        self.system_info = self.get_system_info(self.session, self.ip)               
+        # self.errors = None
+        # self.data = MinerData()                                                                        
 
     @classmethod
     def get_system_info(cls, session, ip) -> json:
@@ -61,8 +63,6 @@ class Miner:
 
     @classmethod
     def parse_device_data(cls, ip: str, session: requests.Session, system_info: dict) -> dict | None:
-        # МБ стоит добавить детализацию по хэш рейту каждой платы в статистику
-        # TODO: Определенно стоит объединить функционал вне зависимости от API
 
         # TODO: переделать
         if not (ip or session or system_info):
@@ -188,6 +188,22 @@ class Miner:
             return False
 
 
+@dataclass
+class MinerData:
+
+    id: str
+    macaddr: str
+    miner_type: str
+    ghs5s: float
+    ghsav: float
+    fan_speed: dict[int]
+    pcb_temp: dict[int]
+    chip_temp: dict[int]
+    chain_rate: dict[float]
+    summary_rate: float
+    elapsed: str
+
+
 class MinerConnector:
 
     def __init__(self, ip: str, auth_data: str = None) -> None:
@@ -240,6 +256,12 @@ class MinerErrorDiag:
         telegram_bot.send_message(config.TG_RECIPIENTS, errors_str)
 
     @classmethod
+    def print_session_errors(cls, errors: list) -> None:
+        errors_str = '\n\n'.join(errors)
+        log.info(errors_str)
+
+
+    @classmethod
     def check_session_devices(cls, devices: dict):
         session_errors = []
         for d in devices.values():
@@ -248,6 +270,7 @@ class MinerErrorDiag:
 
         if session_errors:
             cls.send_session_errors(session_errors)
+            cls.print_session_errors(session_errors)
 
     @classmethod
     def full_check_device(cls, device: dict) -> list:

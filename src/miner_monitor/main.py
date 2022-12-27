@@ -54,7 +54,7 @@ def look_device(devices: dict) -> None:
 
 def monitor():
     log.info("Searching for devices on the network...")
-    devices = ip_searcher.find_ip()
+    devices = ip_searcher.find_devices_ip()
     log.info(f'Finded {devices} devices:')
     print('\n'.join(devices))
     # session_devices = get_session_devices(devices)
