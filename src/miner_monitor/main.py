@@ -1,5 +1,10 @@
+import sys
+import os
+src_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(src_path)
+
 from miner import Miner, MinerConnector, MinerErrorDiag
-from src.modules import ip_searcher
+from modules import ip_searcher
 from config import log
 import config
 import time
